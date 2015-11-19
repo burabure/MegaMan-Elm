@@ -1,0 +1,101 @@
+Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
+   "use strict";
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values)
+   return _elm.Main.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Main",
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $Keyboard = Elm.Keyboard.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Player = Elm.Player.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var update = F2(function (action,
+   model) {
+      return function () {
+         switch (action.ctor)
+         {case "PlayerAction":
+            return _U.replace([["player"
+                               ,A2($Player.update,
+                               action._0,
+                               model.player)]],
+              model);}
+         _U.badCase($moduleName,
+         "between lines 63 and 65");
+      }();
+   });
+   var PlayerAction = function (a) {
+      return {ctor: "PlayerAction"
+             ,_0: a};
+   };
+   var NoOp = {ctor: "NoOp"};
+   var Model = function (a) {
+      return {_: {},player: a};
+   };
+   var directions = $Signal.map(function ($) {
+      return PlayerAction($Player.MoveX(function (_) {
+         return _.x;
+      }($)));
+   })($Signal.sampleOn($Time.fps(60))($Keyboard.arrows));
+   var stage = {_: {}
+               ,background: $Graphics$Collage.filled(A3($Color.rgb,
+               230,
+               230,
+               255))(A2($Graphics$Collage.rect,
+               500,
+               250))
+               ,playerStartingPoint: {ctor: "_Tuple2"
+                                     ,_0: 0
+                                     ,_1: -90}};
+   var initialModel = function () {
+      var playerY = $Basics.snd(stage.playerStartingPoint);
+      var playerX = $Basics.fst(stage.playerStartingPoint);
+      return {_: {}
+             ,player: A3($Player.Model,
+             playerX,
+             playerY,
+             $Player.Right)};
+   }();
+   var models = A3($Signal.foldp,
+   update,
+   initialModel,
+   directions);
+   var view = function (model) {
+      return A3($Graphics$Collage.collage,
+      500,
+      250,
+      _L.fromArray([stage.background
+                   ,$Player.view(model.player)]));
+   };
+   var main = A2($Signal.map,
+   view,
+   models);
+   var Stage = F2(function (a,b) {
+      return {_: {}
+             ,background: a
+             ,playerStartingPoint: b};
+   });
+   _elm.Main.values = {_op: _op
+                      ,Stage: Stage
+                      ,stage: stage
+                      ,directions: directions
+                      ,Model: Model
+                      ,initialModel: initialModel
+                      ,models: models
+                      ,NoOp: NoOp
+                      ,PlayerAction: PlayerAction
+                      ,update: update
+                      ,view: view
+                      ,main: main};
+   return _elm.Main.values;
+};

@@ -1,0 +1,90 @@
+Elm.Player = Elm.Player || {};
+Elm.Player.make = function (_elm) {
+   "use strict";
+   _elm.Player = _elm.Player || {};
+   if (_elm.Player.values)
+   return _elm.Player.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Player",
+   $Basics = Elm.Basics.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var view = function (model) {
+      return function () {
+         var direction = function () {
+            var _v0 = model.dir;
+            switch (_v0.ctor)
+            {case "Left": return "left";
+               case "Right": return "right";}
+            _U.badCase($moduleName,
+            "between lines 51 and 55");
+         }();
+         var spriteSrc = A2($Basics._op["++"],
+         "./sprites/player/",
+         A2($Basics._op["++"],
+         direction,
+         ".gif"));
+         return $Graphics$Collage.move({ctor: "_Tuple2"
+                                       ,_0: model.x
+                                       ,_1: model.y})($Graphics$Collage.toForm(A3($Graphics$Element.image,
+         60,
+         60,
+         spriteSrc)));
+      }();
+   };
+   var MoveX = function (a) {
+      return {ctor: "MoveX",_0: a};
+   };
+   var NoOp = {ctor: "NoOp"};
+   var Right = {ctor: "Right"};
+   var Left = {ctor: "Left"};
+   var update = F2(function (action,
+   player) {
+      return function () {
+         switch (action.ctor)
+         {case "MoveX":
+            return function () {
+                 var newDir = function () {
+                    switch (action._0)
+                    {case -1: return Left;
+                       case 0: return player.dir;
+                       case 1: return Right;}
+                    _U.badCase($moduleName,
+                    "between lines 35 and 39");
+                 }();
+                 var units = $Basics.toFloat(action._0 * 5);
+                 return _U.replace([["x"
+                                    ,player.x + units]
+                                   ,["dir",newDir]],
+                 player);
+              }();
+            case "NoOp": return player;}
+         _U.badCase($moduleName,
+         "between lines 25 and 43");
+      }();
+   });
+   var Model = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,dir: c
+             ,x: a
+             ,y: b};
+   });
+   _elm.Player.values = {_op: _op
+                        ,Model: Model
+                        ,Left: Left
+                        ,Right: Right
+                        ,NoOp: NoOp
+                        ,MoveX: MoveX
+                        ,update: update
+                        ,view: view};
+   return _elm.Player.values;
+};
