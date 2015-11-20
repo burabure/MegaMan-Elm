@@ -6,8 +6,11 @@ import Graphics.Collage as Collage
 
 -- MODEL
 type alias Model =
-  { x : Float
+  { id : String
+  , x : Float
   , y : Float
+  , w : Float
+  , h : Float
   , dir : Direction
   }
 
@@ -32,14 +35,16 @@ update action player =
           toFloat (direction * 5)
 
         newDir =
-          case direction of
-            0 -> player.dir
-            1 -> Right
-            (-1) -> Left
+          if direction < 0 then
+            Left
+          else if direction > 0 then
+            Right
+          else
+            player.dir
       in
         { player
-          | x <- player.x + units
-          , dir <- newDir
+          | x = player.x + units
+          , dir = newDir
          }
 
 
@@ -55,6 +60,6 @@ view model =
     spriteSrc =
       "./sprites/player/" ++ direction ++ ".gif"
   in
-    Element.image 60 60 spriteSrc
+    Element.image (truncate model.w) (truncate model.h) spriteSrc
     |> Collage.toForm
     |> Collage.move (model.x, model.y)

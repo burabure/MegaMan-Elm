@@ -3,8 +3,11 @@ import Graphics.Collage as Collage
 import Color
 import Keyboard
 import Time
-import Player
 --import Debug
+
+import Player
+import Entity
+
 
 -- STAGE
 type alias Stage =
@@ -21,6 +24,19 @@ stage =
   , playerStartingPoint =
       (0, -90)
   }
+
+
+-- ENTITIES
+boxEntity : Entity.Entity
+boxEntity =
+  Entity.Entity "box" 90 -90 30 60
+
+
+box : Collage.Form
+box =
+  Collage.rect boxEntity.w boxEntity.h
+  |> Collage.filled (Color.rgb 75 75 75)
+  |> Collage.move (boxEntity.x, boxEntity.y)
 
 
 -- INPUT
@@ -43,7 +59,7 @@ initialModel =
     playerY = snd stage.playerStartingPoint
   in
     { player =
-        Player.Model playerX playerY Player.Right
+        Player.Model "player1" playerX playerY 60 60 Player.Right
     }
 
 
@@ -54,21 +70,36 @@ models =
 
 -- UPDATE
 type Action
-  = NoOp
-  | PlayerAction Player.Action
+  = PlayerAction Player.Action
 
 
 update : Action -> Model -> Model
 update action model =
   case action of
     PlayerAction action ->
-      { model | player <- Player.update action model.player }
+      { model | player = Player.update action model.player }
 
 
 -- VIEW
 view : Model -> Element.Element
 view model =
-  Collage.collage 500 250 [stage.background, (Player.view model.player)]
+  let
+    playerCollision =
+      Entity.colliding ((Entity.toEntity model.player), boxEntity)
+  in
+    Collage.collage 500 250
+      [ stage.background
+      , (Player.view model.player)
+      , box
+      , log "Collision" playerCollision
+      ]
+
+
+log : String -> a -> Collage.Form
+log title stringable =
+  title ++ ": " ++ (toString stringable)
+  |> Element.show
+  |> Collage.toForm
 
 
 main : Signal Element.Element
